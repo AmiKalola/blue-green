@@ -1,0 +1,39 @@
+name: CI
+on:
+  - push
+jobs:
+  job1:
+    runs-on: self-hosted
+    name: build example and deploy to minikube
+    steps:
+    # - name: delete deploy 
+    #   run: |
+    #     kubectl delete deploy example
+    # - name: delete deploy app1
+    #   run: |
+    #     kubectl delete deploy my-app-v2
+    # - name: delete deploy app2
+    #   run: |
+    #     kubectl delete deploy my-app-v2
+    # - uses: actions/checkout@v2
+    # - name: Try the cluster !
+    #   run: kubectl get pods -A
+    - name: Build images
+      run: |
+        export SHELL=/bin/bash
+        pwd
+        ls
+        eval $(minikube -p minikube docker-env)
+        docker build -t dipak:blue ./appB/
+        docker build -t dipak:blue ./appG/
+        echo -n "verifying images:"
+        docker images        
+    - name: Deploy to service
+      run:
+        kubectl apply -f menifest.yml
+    - name: Deploy to app1.yml
+      run:
+        kubectl apply -f app1.yml
+    - name: Deploy to app2.yml
+      run: 
+        kubectl apply -f app2.yml
